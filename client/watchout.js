@@ -1,19 +1,20 @@
 //Static variables
 var static = {
-  windowX: window.innerWidth,
-  windowY: window.innerHeight,
+  windowX: window.innerWidth - 100,
+  windowY: window.innerHeight - 100,
   enemyNum: 10,
   enemyRadius: 10,
-  enemyColor: '#00F'
-}
-
-
-//Random
-var rand = function(n) {
-  return Math.floor(Math.random()*n);
+  enemyColor: '#00F',
+  enemyDuration: 2000,
 };
-var randX = rand(static.windowX);
-var randY = rand(static.windowY);
+
+
+//Randomize
+var rand = function(n) {
+  return Math.floor(Math.random() * n);
+};
+var randX = function() { return rand(static.windowX); };
+var randY = function() { return rand(static.windowY); };
 
 //Create a board
 var board = d3.select('.board').append('svg')
@@ -30,3 +31,13 @@ var enemies = board.selectAll('circle')
                     .attr('cy', randY ) //random Y position
                     .attr('r', static.enemyRadius) //radius
                     .attr('fill', static.enemyColor); //color
+
+//Make enemies move
+var moveEnemy = function(enemy) {
+  enemy.transition()
+          .duration(static.enemyDuration)
+          .attr("cx", randX)
+          .attr("cy", randY)
+          .each('end', function(){ moveEnemy(d3.select(this))});
+};
+moveEnemy(enemies);
